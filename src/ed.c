@@ -103,6 +103,12 @@ void quit(Command *command)
 	exit(EXIT_SUCCESS);
 }
 
+void unknown(Command *command)
+{
+	puts("?");
+	return;
+}
+
 function find_function(Command *command)
 {
 	function func;
@@ -112,6 +118,9 @@ function find_function(Command *command)
 		break;
 	case 'q':
 		func = quit;
+		break;
+	default:
+		func = unknown;
 		break;
 	}
 	return func;
