@@ -26,6 +26,9 @@ function find_function(Command *command)
 	case 'q':
 		func = quit;
 		break;
+	case 'w':
+		func = write_out;
+		break;
 	default:
 		func = unknown;
 		break;
@@ -55,6 +58,20 @@ void append(Command *command)
 		}
 		line = new_line(charbuf, ++line_no);
 		push_back_line(curbuf, line);
+	}
+}
+
+void write_out(Command *command)
+{
+	if (curbuf == NULL) {
+		/* pass */
+	}
+	else if (strcmp(curbuf->path, "") == 0) {
+		/* Ask the path */
+		write_buffer("junk");
+	}
+	else {
+		write_buffer(curbuf->path);
 	}
 }
 

@@ -85,6 +85,22 @@ Buffer *read_file(const char *path)
 	return buffer;
 }
 
+void write_buffer(const char *path)
+{
+	Line *p;
+	FILE *fs;
+
+	fs = fopen(path, "w+");
+	if (fs == NULL) {
+		/* Err */
+	}
+
+	for (p = curbuf->first_line; p != NULL; p = p->next) {
+		fputs(p->text, fs);
+	}
+	fclose(fs);
+}
+
 int ed()
 {
 	char *cmdbuf;

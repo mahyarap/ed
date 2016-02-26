@@ -47,4 +47,6 @@ void append(Command *command);
 void quit(Command *command);
 void unknown(Command *command);
 char *read_line(FILE *fs);
+void write_buffer(const char *path);
+void write_out(Command *command);
 #endif
