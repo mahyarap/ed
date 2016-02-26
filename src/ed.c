@@ -90,9 +90,17 @@ void append(Command *command)
 	while ((charbuf = read_line(stdin)) != NULL) {
 		Line *line;
 
+		if (strcmp(charbuf, ".\n") == 0) {
+			return;
+		}
 		line = new_line(charbuf, ++line_no);
 		push_back_line(curbuf, line);
 	}
+}
+
+void quit(Command *command)
+{
+	exit(EXIT_SUCCESS);
 }
 
 function find_function(Command *command)
@@ -101,6 +109,9 @@ function find_function(Command *command)
 	switch (command->cmd[0]) {
 	case 'a':
 		func = append;
+		break;
+	case 'q':
+		func = quit;
 		break;
 	}
 	return func;
