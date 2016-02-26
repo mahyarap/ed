@@ -76,16 +76,20 @@ void append(Command *command)
 {
 	int ch;
 	char *charbuf;
+	int line_no = 0;
 
 	if (curbuf == NULL) {
 		curbuf = new_buffer("");
+	}
+	else {
+		line_no = curbuf->last_line->line_no;
 	}
 
 	/* Use fgetc */
 	while ((charbuf = read_line(stdin)) != NULL) {
 		Line *line;
 
-		line = new_line(charbuf, -1);
+		line = new_line(charbuf, ++line_no);
 		push_back_line(curbuf, line);
 	}
 }
