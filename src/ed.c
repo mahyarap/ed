@@ -40,27 +40,53 @@ Command *parse_cmd(char *cmdstr)
 	}
 }
 
+char *read_line(FILE *fs)
+{
+	int ch;
+	char *buf;
+	int i = 0;
+	int buffsize = BUFFSIZE;
+
+	buf = charalloc(BUFFSIZE);
+	while ((ch = fgetc(fs)) != EOF) {
+		/* check for overflow */
+		if (i == BUFFSIZE) {
+			buffsize += BUFFSIZE;
+			buf = charrealloc(buf, buffsize);
+			if (buf == NULL) {
+				/* Err */
+			}
+		}
+
+		buf[i++] = (char)ch;
+		buf[i] = '\0';
+
+		if (buf[i - 1] == '\n') {
+			return buf;
+		}
+	}
+	if (strlen(buf) != 0) {
+		return buf;
+	}
+
+	return NULL;
+}
+
 void append(Command *command)
 {
+	int ch;
 	char *charbuf;
 
 	if (curbuf == NULL) {
 		curbuf = new_buffer("");
 	}
 
-	charbuf = charalloc(BUFFSIZE);
 	/* Use fgetc */
-	while (fgets(charbuf, BUFFSIZE, stdin) != NULL) {
+	while ((charbuf = read_line(stdin)) != NULL) {
 		Line *line;
-		int line_no = 0;
 
-		line = new_line(charbuf, line_no);
+		line = new_line(charbuf, -1);
 		push_back_line(curbuf, line);
-	}
-
-	Line *p;
-	for (p = curbuf->first_line; p != NULL; p = p->next) {
-		printf("%s", p->text);
 	}
 }
 
@@ -92,36 +118,11 @@ Buffer *read_file(const char *path)
 	}
 
 	buffer = new_buffer(path);
-	buf = charalloc(BUFFSIZE);
-	while ((ch = fgetc(fs)) != EOF) {
-		/* check for overflow */
-		if (i == BUFFSIZE) {
-			buffsize += BUFFSIZE;
-			buf = charrealloc(buf, buffsize);
-			if (buf == NULL) {
-				/* Err */
-			}
-		}
-		
-		buf[i++] = (char)ch;
-		buf[i] = '\0';
-
-		if (buf[i] == '\n') {
-			line_no++;
-			line = new_line(buf, line_no);
-			push_back_line(buffer, line);
-			buf[0] = '\0';
-			i = 0;
-		}
-	}
-	/* Read the last line */
-	if (buf[0] != '\0') {
+	while ((buf = read_line(fs)) != NULL) {
 		line_no++;
 		line = new_line(buf, line_no);
 		push_back_line(buffer, line);
 	}
-
-	free(buf);
 	fclose(fs);
 
 	return buffer;

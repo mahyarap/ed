@@ -2,7 +2,7 @@
 #define ED_H
 #include <stdlib.h>
 
-#define BUFFSIZE 256
+#define BUFFSIZE 128
 
 typedef struct Range {
 	int beg;
