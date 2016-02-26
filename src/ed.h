@@ -1,6 +1,7 @@
 #ifndef ED_H
 #define ED_H
 #include <stdlib.h>
+#include <stdio.h>
 
 #define BUFFSIZE 128
 
@@ -40,4 +41,10 @@ Line *new_line(const char *text, int line_no);
 void push_back_line(Buffer *buffer, Line *line);
 void push_front_line(Buffer *buffer, Line *line);
 void insert_line(Buffer *buffer, Line *line);
+Command *parse_cmd(char *cmdstr);
+function find_function(Command *command);
+void append(Command *command);
+void quit(Command *command);
+void unknown(Command *command);
+char *read_line(FILE *fs);
 #endif
