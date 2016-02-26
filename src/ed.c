@@ -31,6 +31,7 @@ Command *parse_cmd(char *cmdstr)
 	int beg = 0;
 	Command *command;
 
+	strstrip(cmdstr);
 	command = malloc(sizeof(Command));
 	if (strlen(cmdstr) == 1) {
 		strcpy(command->cmd, cmdstr);
@@ -139,16 +140,16 @@ int ed()
 	function func;
 
 	cmdbuf = malloc(BUFFSIZE * sizeof(char));
+	/* Get a command
+	 * Parse the command
+	 * Execute the command */
 	while (fgets(cmdbuf, BUFFSIZE, stdin) != NULL) {
-		strstrip(cmdbuf);	
 		command = parse_cmd(cmdbuf);
 		func = find_function(command);
 		func(command);
 	}
 	free(cmdbuf);
-	/* Get a command
-	 * Parse the command
-	 * Execute the command */
+	
 	return 0;
 }
 
