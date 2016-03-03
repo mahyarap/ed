@@ -40,6 +40,8 @@ int ed()
 		command = parse_cmd(cmdbuf);
 		func = find_function(command);
 		func(command);
+
+		free(command);
 	}
 	free(cmdbuf);
 	
