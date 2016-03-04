@@ -41,6 +41,7 @@ int ed()
 		func = find_function(command);
 		func(command);
 
+		clrstr(cmdbuf);
 		delete_cmd(command);
 	}
 	free(cmdbuf);
