@@ -3,23 +3,32 @@
 
 Command *parse_cmd(char *cmdstr)
 {
-	int beg = 0;
 	Command *command;
 
+	command = new_cmd();
 	strstrip(cmdstr);
-	command = malloc(sizeof(Command));
 	if (strlen(cmdstr) == 1) {
-		strcpy(command->cmd, cmdstr);
-		command->range.beg = 0;
-		command->range.end = 0;
+		command->cmd = cmdstr[0];
 		return command;
 	}
+
+	/* This is temporary. I just for the moment, allow one command
+	 * and one argument, without any range. In the future, I'll add
+	 * support for parsing a full command with all its components. */
+	char *cmd, *arg;
+
+	cmd = strtok(cmdstr, " ");
+	command->cmd = cmd != NULL ? cmd[0] : '\0';
+	arg = strtok(NULL, " ");
+	strcpy(command->arg, arg != NULL ? arg : "");
+
+	return command;
 }
 
 function find_function(Command *command)
 {
 	function func;
-	switch (command->cmd[0]) {
+	switch (command->cmd) {
 	case 'a':
 		func = append;
 		break;
@@ -34,6 +43,23 @@ function find_function(Command *command)
 		break;
 	}
 	return func;
+}
+
+Command *new_cmd()
+{
+	Command *command;
+
+	command = malloc(sizeof(Command));
+	command->range.beg = 0;
+	command->range.end = 0;
+	command->cmd = '\0';
+	command->arg = charalloc(BUFFSIZE);
+	return command;
+}
+
+void delete_cmd(Command *command)
+{
+	free(command->arg);
 }
 
 void append(Command *command)
@@ -68,7 +94,7 @@ void write_out(Command *command)
 	}
 	else if (strcmp(curbuf->path, "") == 0) {
 		/* Ask the path */
-		write_buffer("junk");
+		write_buffer(command->arg);
 	}
 	else {
 		write_buffer(curbuf->path);

@@ -2,6 +2,7 @@
 #define ED_H
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #define BUFFSIZE 128
 
@@ -12,7 +13,8 @@ typedef struct Range {
 
 typedef struct Command {
 	Range range;
-	char cmd[3];
+	char cmd;
+	char *arg;
 } Command;
 
 typedef struct Line {
@@ -49,4 +51,7 @@ void unknown(Command *command);
 char *read_line(FILE *fs);
 void write_buffer(const char *path);
 void write_out(Command *command);
+void delete_cmd(Command *command);
+void clrstr(char *str);
+Command *new_cmd();
 #endif

@@ -1,7 +1,6 @@
 #include "ed.h"
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 char *read_line(FILE *fs)
 {
