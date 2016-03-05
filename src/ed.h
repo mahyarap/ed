@@ -66,6 +66,7 @@ void push_back_line(Buffer *buffer, Line *line);
 void push_front_line(Buffer *buffer, Line *line);
 void insert_line(Buffer *buffer, Line *line);
 char *read_line(FILE *fs);
+int read_file(const char *path);
 void write_buffer(const char *path);
 
 /* cmds.c */
@@ -75,6 +76,7 @@ void *parse_command(Command *command, char *cmdstr);
 function find_function(Command *command);
 void append(Command *command);
 void quit(Command *command);
+void read_in(Command *command);
 void write_out(Command *command);
 void unknown(Command *command);
 #endif

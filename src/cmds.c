@@ -11,6 +11,9 @@ function find_function(Command *command)
 	case 'q':
 		func = quit;
 		break;
+	case 'e':
+		func = read_in;
+		break;
 	case 'w':
 		func = write_out;
 		break;
@@ -81,6 +84,28 @@ void append(Command *command)
 		}
 		line = new_line(charbuf, ++line_no);
 		push_back_line(curbuf, line);
+	}
+}
+
+void read_in(Command *command)
+{
+	int retval;
+
+	if (strlen(curbuf->path) == 0) {
+		if (command->arg != NULL && strlen(command->arg) != 0) {
+			retval = read_file(command->arg);
+			if (retval != 0) {
+				unknown(command);
+				return;
+			}
+		}
+		else {
+			unknown(command);
+			return;
+		}
+	}
+	else {
+		read_file(curbuf->path);
 	}
 }
 

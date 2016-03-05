@@ -34,7 +34,7 @@ char *read_line(FILE *fs)
 	return NULL;
 }
 
-Buffer *read_file(const char *path)
+int read_file(const char *path)
 {
 	int ch;
 	FILE *fs;
@@ -42,23 +42,21 @@ Buffer *read_file(const char *path)
 	int line_no = 0;
 	char *buf;
 	Line *line;
-	Buffer *buffer;
 	size_t buffsize = BUFFSIZE;
 
 	fs = fopen(path, "rw");
 	if (fs == NULL) {
-		/* Err */
+		perror(path);
+		return 1;
 	}
 
-	buffer = new_buffer(path);
 	while ((buf = read_line(fs)) != NULL) {
 		line_no++;
 		line = new_line(buf, line_no);
-		push_back_line(buffer, line);
+		push_back_line(curbuf, line);
 	}
 	fclose(fs);
-
-	return buffer;
+	return 0;
 }
 
 void write_buffer(const char *path)
@@ -68,7 +66,8 @@ void write_buffer(const char *path)
 
 	fs = fopen(path, "w+");
 	if (fs == NULL) {
-		/* Err */
+		perror(path);
+		return;
 	}
 
 	for (p = curbuf->first_line; p != NULL; p = p->next) {
