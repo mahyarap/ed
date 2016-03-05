@@ -89,15 +89,17 @@ void append(Command *command)
 
 void read_in(Command *command)
 {
-	int retval;
+	ssize_t retval;
 
 	if (strlen(curbuf->path) == 0) {
 		if (command->arg != NULL && strlen(command->arg) != 0) {
 			retval = read_file(command->arg);
-			if (retval != 0) {
+			if (retval < 0) {
 				unknown(command);
 				return;
 			}
+
+			strcpy(curbuf->path, command->arg);
 		}
 		else {
 			unknown(command);

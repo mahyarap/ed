@@ -39,11 +39,12 @@ int read_file(const char *path)
 	FILE *fs;
 	char *buf;
 	int line_no = 0;
+	ssize_t total = 0;
 
 	fs = fopen(path, "r");
 	if (fs == NULL) {
 		perror(path);
-		return 1;
+		return -1;
 	}
 
 	while ((buf = read_line(fs)) != NULL) {
@@ -52,9 +53,10 @@ int read_file(const char *path)
 		line_no++;
 		line = new_line(buf, line_no);
 		push_back_line(curbuf, line);
+		total += strlen(buf);
 	}
 	fclose(fs);
-	return 0;
+	return total;
 }
 
 int write_buffer(const char *path)
