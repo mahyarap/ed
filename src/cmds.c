@@ -100,6 +100,7 @@ void read_in(Command *command)
 			}
 
 			strcpy(curbuf->path, command->arg);
+			printf("%ld\n", retval);
 		}
 		else {
 			unknown(command);
