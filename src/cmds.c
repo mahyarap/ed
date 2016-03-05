@@ -62,6 +62,7 @@ Command *new_cmd()
 void delete_cmd(Command *command)
 {
 	free(command->arg);
+	free(command);
 }
 
 void append(Command *command)
