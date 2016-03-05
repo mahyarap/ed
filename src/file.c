@@ -34,7 +34,7 @@ char *read_line(FILE *fs)
 	return NULL;
 }
 
-int read_file(const char *path)
+ssize_t read_file(const char *path)
 {
 	FILE *fs;
 	char *buf;

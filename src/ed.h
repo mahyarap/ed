@@ -66,7 +66,7 @@ void push_back_line(Buffer *buffer, Line *line);
 void push_front_line(Buffer *buffer, Line *line);
 void insert_line(Buffer *buffer, Line *line);
 char *read_line(FILE *fs);
-int read_file(const char *path);
+ssize_t read_file(const char *path);
 int write_buffer(const char *path);
 
 /* cmds.c */
