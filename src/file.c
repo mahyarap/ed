@@ -59,22 +59,24 @@ ssize_t read_file(const char *path)
 	return total;
 }
 
-int write_buffer(const char *path)
+ssize_t write_buffer(const char *path)
 {
 	Line *p;
 	FILE *fs;
+	ssize_t total = 0;
 
 	fs = fopen(path, "w+");
 	if (fs == NULL) {
 		perror(path);
-		return 1;
+		return -1;
 	}
 
 	for (p = curbuf->first_line; p != NULL; p = p->next) {
 		fputs(p->text, fs);
+		total += strlen(p->text);
 	}
 	fclose(fs);
-	return 0;
+	return total;
 }
 
 Buffer *new_buffer(const char *path)

@@ -114,12 +114,12 @@ void read_in(Command *command)
 
 void write_out(Command *command)
 {
-	int retval;
+	ssize_t retval;
 
 	if (strlen(curbuf->path) == 0) {
 		if (command->arg != NULL && strlen(command->arg) != 0) {
 			retval = write_buffer(command->arg);
-			if (retval != 0) {
+			if (retval < 0) {
 				unknown(command);
 				return;
 			}
