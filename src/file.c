@@ -36,21 +36,19 @@ char *read_line(FILE *fs)
 
 int read_file(const char *path)
 {
-	int ch;
 	FILE *fs;
-	int i = 0;
-	int line_no = 0;
 	char *buf;
-	Line *line;
-	size_t buffsize = BUFFSIZE;
+	int line_no = 0;
 
-	fs = fopen(path, "rw");
+	fs = fopen(path, "r");
 	if (fs == NULL) {
 		perror(path);
 		return 1;
 	}
 
 	while ((buf = read_line(fs)) != NULL) {
+		Line *line;
+
 		line_no++;
 		line = new_line(buf, line_no);
 		push_back_line(curbuf, line);
