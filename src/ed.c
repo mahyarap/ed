@@ -33,12 +33,14 @@ int ed()
 	function func;
 
 	cmdstr = charalloc(BUFFSIZE);
-	/* Get a command
+	/* Main Loop
+	 *
+	 * Get a command
 	 * Parse the command
 	 * Execute the command */
 	curbuf = new_buffer(NULL);
 	while (fgets(cmdstr, BUFFSIZE, stdin) != NULL) {
-		command = parse_cmd(cmdstr);
+		command = new_command(cmdstr);
 		func = find_function(command);
 		func(command);
 

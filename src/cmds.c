@@ -1,32 +1,6 @@
 #include "ed.h"
 #include <string.h>
 
-Command *parse_cmd(char *cmdstr)
-{
-	Command *command;
-
-	command = new_cmd();
-	strstrip(cmdstr);
-	if (strlen(cmdstr) == 1) {
-		command->cmd = cmdstr[0];
-		return command;
-	}
-
-	/* This is temporary. I just for the moment, allow one command
-	 * and one argument, without any range. In the future, I'll add
-	 * support for parsing a full command with all its components. */
-	char *cmd, *arg;
-
-	cmd = strtok(cmdstr, " ");
-	command->cmd = cmd != NULL ? cmd[0] : '\0';
-	arg = strtok(NULL, " ");
-	if (arg != NULL && strlen(arg) != 0) {
-		strcpy(command->arg, arg);
-	}
-
-	return command;
-}
-
 function find_function(Command *command)
 {
 	function func;
@@ -47,7 +21,31 @@ function find_function(Command *command)
 	return func;
 }
 
-Command *new_cmd()
+void *parse_command(Command *command, char *cmdstr)
+{
+	if (cmdstr == NULL || strlen(cmdstr) == 0) {
+		return command;
+	}
+
+	strstrip(cmdstr);
+	if (strlen(cmdstr) == 1) {
+		command->cmd = cmdstr[0];
+		return command;
+	}
+	/* This is temporary. I just for the moment, allow one command
+	 * and one argument, without any range. In the future, I'll add
+	 * support for parsing a full command with all its components. */
+	char *cmd, *arg;
+
+	cmd = strtok(cmdstr, " ");
+	command->cmd = cmd != NULL ? cmd[0] : '\0';
+	arg = strtok(NULL, " ");
+	if (arg != NULL && strlen(arg) != 0) {
+		strcpy(command->arg, arg);
+	}
+}
+
+Command *new_command(char *cmdstr)
 {
 	Command *command;
 
@@ -56,6 +54,8 @@ Command *new_cmd()
 	command->range.end = 0;
 	command->cmd = '\0';
 	command->arg = charalloc(BUFFSIZE);
+
+	parse_command(command, cmdstr);
 	return command;
 }
 

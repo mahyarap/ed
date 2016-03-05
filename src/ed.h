@@ -69,9 +69,9 @@ char *read_line(FILE *fs);
 void write_buffer(const char *path);
 
 /* cmds.c */
-Command *new_cmd();
+Command *new_command(char *cmdstr);
 void delete_cmd(Command *command);
-Command *parse_cmd(char *cmdstr);
+void *parse_command(Command *command, char *cmdstr);
 function find_function(Command *command);
 void append(Command *command);
 void quit(Command *command);
