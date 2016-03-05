@@ -123,6 +123,8 @@ void write_out(Command *command)
 				unknown(command);
 				return;
 			}
+
+			printf("%ld\n", retval);
 		}
 		else {
 			unknown(command);
@@ -130,7 +132,12 @@ void write_out(Command *command)
 		}
 	}
 	else {
-		write_buffer(curbuf->path);
+		retval = write_buffer(curbuf->path);
+		if (retval < 0) {
+			unknown(command);
+			return;
+		}
+		printf("%ld\n", retval);
 	}
 }
 
