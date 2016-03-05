@@ -36,6 +36,7 @@ int ed()
 	/* Get a command
 	 * Parse the command
 	 * Execute the command */
+	curbuf = new_buffer(NULL);
 	while (fgets(cmdbuf, BUFFSIZE, stdin) != NULL) {
 		command = parse_cmd(cmdbuf);
 		func = find_function(command);

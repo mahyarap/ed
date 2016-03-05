@@ -20,7 +20,9 @@ Command *parse_cmd(char *cmdstr)
 	cmd = strtok(cmdstr, " ");
 	command->cmd = cmd != NULL ? cmd[0] : '\0';
 	arg = strtok(NULL, " ");
-	strcpy(command->arg, arg != NULL ? arg : "");
+	if (arg != NULL && strlen(arg) != 0) {
+		strcpy(command->arg, arg);
+	}
 
 	return command;
 }
@@ -68,13 +70,7 @@ void append(Command *command)
 	char *charbuf;
 	int line_no = 0;
 
-	if (curbuf == NULL) {
-		curbuf = new_buffer("");
-	}
-	else {
-		line_no = curbuf->last_line->line_no;
-	}
-
+	/* line_no = curbuf->last_line->line_no; */
 	/* Use fgetc */
 	while ((charbuf = read_line(stdin)) != NULL) {
 		Line *line;
@@ -89,12 +85,14 @@ void append(Command *command)
 
 void write_out(Command *command)
 {
-	if (curbuf == NULL) {
-		/* pass */
-	}
-	else if (strcmp(curbuf->path, "") == 0) {
-		/* Ask the path */
-		write_buffer(command->arg);
+	if (strlen(curbuf->path) == 0) {
+		if (command->arg != NULL && strlen(command->arg) != 0) {
+			write_buffer(command->arg);
+		}
+		else {
+			unknown(command);
+			return;
+		}
 	}
 	else {
 		write_buffer(curbuf->path);

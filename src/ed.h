@@ -2,6 +2,7 @@
 #define ED_H
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 #include <assert.h>
 
 #define BUFFSIZE 128
@@ -25,7 +26,7 @@ typedef struct Line {
 } Line;
 
 typedef struct Buffer {
-	char *path;
+	char path[PATH_MAX];
 	Line *first_line;
 	Line *last_line;
 	Line *cur_line;

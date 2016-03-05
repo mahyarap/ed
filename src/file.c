@@ -77,16 +77,14 @@ void write_buffer(const char *path)
 	fclose(fs);
 }
 
-
 Buffer *new_buffer(const char *path)
 {
 	Buffer *buffer;
 
-	assert(path != NULL);
-
 	buffer = malloc(sizeof(Buffer));
-	buffer->path = charalloc(strlen(path) + 1);
-	strcpy(buffer->path, path);
+	if (path != NULL && strlen(path) != 0) {
+		strcpy(buffer->path, path);
+	}
 	buffer->first_line = NULL;
 	buffer->last_line = NULL;
 	buffer->cur_line = NULL;
