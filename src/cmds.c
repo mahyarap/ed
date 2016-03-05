@@ -111,9 +111,15 @@ void read_in(Command *command)
 
 void write_out(Command *command)
 {
+	int retval;
+
 	if (strlen(curbuf->path) == 0) {
 		if (command->arg != NULL && strlen(command->arg) != 0) {
-			write_buffer(command->arg);
+			retval = write_buffer(command->arg);
+			if (retval != 0) {
+				unknown(command);
+				return;
+			}
 		}
 		else {
 			unknown(command);
