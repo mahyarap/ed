@@ -28,24 +28,24 @@ void print_version()
 
 int ed()
 {
-	char *cmdbuf;
+	char *cmdstr;
 	Command *command;
 	function func;
 
-	cmdbuf = malloc(BUFFSIZE * sizeof(char));
+	cmdstr = charalloc(BUFFSIZE);
 	/* Get a command
 	 * Parse the command
 	 * Execute the command */
 	curbuf = new_buffer(NULL);
-	while (fgets(cmdbuf, BUFFSIZE, stdin) != NULL) {
-		command = parse_cmd(cmdbuf);
+	while (fgets(cmdstr, BUFFSIZE, stdin) != NULL) {
+		command = parse_cmd(cmdstr);
 		func = find_function(command);
 		func(command);
 
-		clrstr(cmdbuf);
+		clrstr(cmdstr);
 		delete_cmd(command);
 	}
-	free(cmdbuf);
+	free(cmdstr);
 	
 	return 0;
 }
