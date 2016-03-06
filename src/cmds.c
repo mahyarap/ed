@@ -101,56 +101,50 @@ void find(Command *command)
 
 void edit(Command *command)
 {
+	char *path;
 	ssize_t retval;
 
 	if (strlen(curbuf->path) == 0) {
-		if (command->arg != NULL && strlen(command->arg) != 0) {
-			retval = read_file(command->arg);
-			if (retval < 0) {
-				unknown(command);
-				return;
-			}
-
+		if (strlen(command->arg) != 0) {
 			strcpy(curbuf->path, command->arg);
-			printf("%ld\n", retval);
 		}
 		else {
 			unknown(command);
 			return;
 		}
 	}
-	else {
-		read_file(curbuf->path);
+
+	path = (strlen(command->arg) != 0) ? command->arg : curbuf->path;
+	retval = read_file(path);
+	if (retval < 0) {
+		unknown(command);
+		return;
 	}
+	printf("%ld\n", retval);
 }
 
 void write_out(Command *command)
 {
+	char *path;
 	ssize_t retval;
 
 	if (strlen(curbuf->path) == 0) {
-		if (command->arg != NULL && strlen(command->arg) != 0) {
-			retval = write_buffer(command->arg);
-			if (retval < 0) {
-				unknown(command);
-				return;
-			}
-
-			printf("%ld\n", retval);
+		if (strlen(command->arg) != 0) {
+			strcpy(curbuf->path, command->arg);
 		}
 		else {
 			unknown(command);
 			return;
 		}
 	}
-	else {
-		retval = write_buffer(curbuf->path);
-		if (retval < 0) {
-			unknown(command);
-			return;
-		}
-		printf("%ld\n", retval);
+
+	path = (strlen(command->arg) != 0) ? command->arg : curbuf->path;
+	retval = write_buffer(path);
+	if (retval < 0) {
+		unknown(command);
+		return;
 	}
+	printf("%ld\n", retval);
 }
 
 void quit(Command *command)
