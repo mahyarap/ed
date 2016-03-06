@@ -75,10 +75,10 @@ Command *parse_command(Command *command, char *cmdstr)
 void append(Command *command)
 {
 	int ch;
+	int line_no;
 	char *charbuf;
-	int line_no = 0;
 
-	/* line_no = curbuf->last_line->line_no; */
+	line_no = (curbuf->last_line != NULL) ? curbuf->last_line->line_no : 0;
 	while ((charbuf = read_line(stdin)) != NULL) {
 		Line *line;
 
