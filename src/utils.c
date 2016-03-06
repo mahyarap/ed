@@ -32,7 +32,8 @@ char *charalloc(size_t len)
 
 	buffer = malloc((len + 1) * sizeof(char));
 	if (buffer == NULL) {
-		/* Err */
+		perror(NULL);
+		exit(EXIT_FAILURE);
 	}
 	buffer[0] = '\0';
 
@@ -45,7 +46,8 @@ char *charrealloc(char *buffer, size_t len)
 
 	new_buffer = realloc(buffer, len);
 	if (new_buffer == NULL) {
-		/* Err */
+		perror(NULL);
+		exit(EXIT_FAILURE);
 	}
 
 	return new_buffer;

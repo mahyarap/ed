@@ -2,6 +2,36 @@
 #include <stdlib.h>
 #include <string.h>
 
+Buffer *new_buffer(const char *path)
+{
+	Buffer *buffer;
+
+	buffer = malloc(sizeof(Buffer));
+	if (path != NULL && strlen(path) != 0) {
+		strcpy(buffer->path, path);
+	}
+	buffer->first_line = NULL;
+	buffer->last_line = NULL;
+	buffer->cur_line = NULL;
+
+	return buffer;
+}
+
+Line *new_line(const char *text, int line_no)
+{
+	Line *line;
+
+	line = malloc(sizeof(Line));
+	line->text = charalloc(strlen(text) + 1);
+	strcpy(line->text, text);
+	line->line_no = line_no;
+	line->next = NULL;
+	line->prev = NULL;
+
+	return line;
+}
+
+
 char *read_line(FILE *fs)
 {
 	int ch;
@@ -77,35 +107,6 @@ ssize_t write_buffer(const char *path)
 	}
 	fclose(fs);
 	return total;
-}
-
-Buffer *new_buffer(const char *path)
-{
-	Buffer *buffer;
-
-	buffer = malloc(sizeof(Buffer));
-	if (path != NULL && strlen(path) != 0) {
-		strcpy(buffer->path, path);
-	}
-	buffer->first_line = NULL;
-	buffer->last_line = NULL;
-	buffer->cur_line = NULL;
-
-	return buffer;
-}
-
-Line *new_line(const char *text, int line_no)
-{
-	Line *line;
-
-	line = malloc(sizeof(Line));
-	line->text = charalloc(strlen(text) + 1);
-	strcpy(line->text, text);
-	line->line_no = line_no;
-	line->next = NULL;
-	line->prev = NULL;
-
-	return line;
 }
 
 void push_back_line(Buffer *buffer, Line *line)

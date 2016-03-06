@@ -27,6 +27,26 @@ function find_function(Command *command)
 	return func;
 }
 
+Command *new_command(char *cmdstr)
+{
+	Command *command;
+
+	command = malloc(sizeof(Command));
+	command->range.beg = 0;
+	command->range.end = 0;
+	command->cmd = '\0';
+	command->arg = charalloc(BUFFSIZE);
+
+	parse_command(command, cmdstr);
+	return command;
+}
+
+void delete_cmd(Command *command)
+{
+	free(command->arg);
+	free(command);
+}
+
 void *parse_command(Command *command, char *cmdstr)
 {
 	if (cmdstr == NULL || strlen(cmdstr) == 0) {
@@ -51,26 +71,6 @@ void *parse_command(Command *command, char *cmdstr)
 	}
 }
 
-Command *new_command(char *cmdstr)
-{
-	Command *command;
-
-	command = malloc(sizeof(Command));
-	command->range.beg = 0;
-	command->range.end = 0;
-	command->cmd = '\0';
-	command->arg = charalloc(BUFFSIZE);
-
-	parse_command(command, cmdstr);
-	return command;
-}
-
-void delete_cmd(Command *command)
-{
-	free(command->arg);
-	free(command);
-}
-
 void append(Command *command)
 {
 	int ch;
@@ -78,7 +78,6 @@ void append(Command *command)
 	int line_no = 0;
 
 	/* line_no = curbuf->last_line->line_no; */
-	/* Use fgetc */
 	while ((charbuf = read_line(stdin)) != NULL) {
 		Line *line;
 
