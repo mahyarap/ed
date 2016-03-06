@@ -10,6 +10,9 @@ Buffer *new_buffer(const char *path)
 	if (path != NULL && strlen(path) != 0) {
 		strcpy(buffer->path, path);
 	}
+	else {
+		buffer->path[0] = '\0';
+	}
 	buffer->first_line = NULL;
 	buffer->last_line = NULL;
 	buffer->cur_line = NULL;
