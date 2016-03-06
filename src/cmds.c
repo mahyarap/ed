@@ -47,7 +47,7 @@ void delete_command(Command *command)
 	free(command);
 }
 
-void *parse_command(Command *command, char *cmdstr)
+Command *parse_command(Command *command, char *cmdstr)
 {
 	if (cmdstr == NULL || strlen(cmdstr) == 0) {
 		return command;
@@ -69,6 +69,7 @@ void *parse_command(Command *command, char *cmdstr)
 	if (arg != NULL && strlen(arg) != 0) {
 		strcpy(command->arg, arg);
 	}
+	return command;
 }
 
 void append(Command *command)
