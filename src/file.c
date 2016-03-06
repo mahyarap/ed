@@ -48,9 +48,6 @@ char *read_line(FILE *fs)
 		if (i == BUFFSIZE) {
 			buffsize += BUFFSIZE;
 			buf = charrealloc(buf, buffsize);
-			if (buf == NULL) {
-				/* Err */
-			}
 		}
 
 		buf[i++] = (char)ch;
