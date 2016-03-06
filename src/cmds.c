@@ -9,7 +9,7 @@ function find_function(Command *command)
 		func = append;
 		break;
 	case 'e':
-		func = read_in;
+		func = edit;
 		break;
 	case 'f':
 		func = find;
@@ -99,7 +99,7 @@ void find(Command *command)
 	}
 }
 
-void read_in(Command *command)
+void edit(Command *command)
 {
 	ssize_t retval;
 
