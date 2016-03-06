@@ -92,7 +92,7 @@ void append(Command *command)
 
 void find(Command *command)
 {
-	if (curbuf->path != NULL && strlen(curbuf->path) != 0) {
+	if (strlen(curbuf->path) != 0) {
 		puts(curbuf->path);
 	}
 	else {
@@ -156,5 +156,4 @@ void quit(Command *command)
 void unknown(Command *command)
 {
 	puts("?");
-	return;
 }

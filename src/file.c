@@ -25,7 +25,7 @@ Line *new_line(const char *text, int line_no)
 	Line *line;
 
 	line = malloc(sizeof(Line));
-	line->text = charalloc(strlen(text) + 1);
+	line->text = charalloc(strlen(text));
 	strcpy(line->text, text);
 	line->line_no = line_no;
 	line->next = NULL;
