@@ -45,7 +45,7 @@ int ed()
 		func(command);
 
 		clrstr(cmdstr);
-		delete_cmd(command);
+		delete_command(command);
 	}
 	free(cmdstr);
 	

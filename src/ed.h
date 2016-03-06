@@ -72,7 +72,7 @@ ssize_t write_buffer(const char *path);
 /* cmds.c */
 function find_function(Command *command);
 Command *new_command(char *cmdstr);
-void delete_cmd(Command *command);
+void delete_command(Command *command);
 void *parse_command(Command *command, char *cmdstr);
 void append(Command *command);
 void find(Command *command);

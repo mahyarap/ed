@@ -41,7 +41,7 @@ Command *new_command(char *cmdstr)
 	return command;
 }
 
-void delete_cmd(Command *command)
+void delete_command(Command *command)
 {
 	free(command->arg);
 	free(command);
