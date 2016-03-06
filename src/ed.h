@@ -75,6 +75,7 @@ void delete_cmd(Command *command);
 void *parse_command(Command *command, char *cmdstr);
 function find_function(Command *command);
 void append(Command *command);
+void find(Command *command);
 void quit(Command *command);
 void read_in(Command *command);
 void write_out(Command *command);

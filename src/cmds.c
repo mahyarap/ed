@@ -8,14 +8,17 @@ function find_function(Command *command)
 	case 'a':
 		func = append;
 		break;
-	case 'q':
-		func = quit;
-		break;
 	case 'e':
 		func = read_in;
 		break;
+	case 'f':
+		func = find;
+		break;
 	case 'w':
 		func = write_out;
+		break;
+	case 'q':
+		func = quit;
 		break;
 	default:
 		func = unknown;
@@ -84,6 +87,16 @@ void append(Command *command)
 		}
 		line = new_line(charbuf, ++line_no);
 		push_back_line(curbuf, line);
+	}
+}
+
+void find(Command *command)
+{
+	if (curbuf->path != NULL && strlen(curbuf->path) != 0) {
+		puts(curbuf->path);
+	}
+	else {
+		unknown(command);
 	}
 }
 
