@@ -64,7 +64,7 @@ Command *parse_command(Command *command, char *cmdstr)
 	char *cmd, *arg;
 
 	cmd = strtok(cmdstr, " ");
-	command->cmd = cmd != NULL ? cmd[0] : '\0';
+	command->cmd = (cmd != NULL) ? cmd[0] : '\0';
 	arg = strtok(NULL, " ");
 	if (arg != NULL && strlen(arg) != 0) {
 		strcpy(command->arg, arg);
@@ -102,25 +102,37 @@ void find(Command *command)
 
 void edit(Command *command)
 {
-	char *path;
+	Buffer *buffer;
 	ssize_t retval;
+	char path[PATH_MAX];
 
-	if (strlen(curbuf->path) == 0) {
-		if (strlen(command->arg) != 0) {
-			strcpy(curbuf->path, command->arg);
-		}
-		else {
-			unknown(command);
-			return;
-		}
-	}
-
-	path = (strlen(command->arg) != 0) ? command->arg : curbuf->path;
-	retval = read_file(path);
-	if (retval < 0) {
+	if (curbuf->modified) {
+		curbuf->modified = false;
 		unknown(command);
 		return;
 	}
+	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
+		unknown(command);
+		return;
+	}
+
+	strcpy(path, (strlen(command->arg) != 0) ? command->arg : curbuf->path);
+	if (strlen(curbuf->path) == 0) {
+		strcpy(curbuf->path, path);
+	}
+	buffer = curbuf;
+	if (curbuf->first_line != NULL) {
+		delete_buffer(curbuf);
+		buffer = new_buffer(path);
+		curbuf = buffer;
+	}
+	retval = read_file(buffer, path);
+	if (retval < 0) {
+		delete_buffer(buffer);
+		unknown(command);
+		return;
+	}
+	buffer->modified = false;
 	printf("%ld\n", retval);
 }
 

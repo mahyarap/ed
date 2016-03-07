@@ -21,6 +21,18 @@ Buffer *new_buffer(const char *path)
 	return buffer;
 }
 
+void delete_buffer(Buffer *buffer)
+{
+	Line *p, *tmp;
+
+	for (p = buffer->first_line; p != NULL;) {
+		tmp = p->next;
+		delete_line(p);
+		p = tmp;
+	}
+	free(buffer);
+}
+
 Line *new_line(const char *text, int line_no)
 {
 	Line *line;
@@ -35,6 +47,11 @@ Line *new_line(const char *text, int line_no)
 	return line;
 }
 
+void delete_line(Line *line)
+{
+	free(line->text);
+	free(line);
+}
 
 char *read_line(FILE *fs)
 {
@@ -65,7 +82,7 @@ char *read_line(FILE *fs)
 	return NULL;
 }
 
-ssize_t read_file(const char *path)
+ssize_t read_file(Buffer *buffer, const char *path)
 {
 	FILE *fs;
 	char *buf;
@@ -83,7 +100,7 @@ ssize_t read_file(const char *path)
 
 		line_no++;
 		line = new_line(buf, line_no);
-		push_back_line(curbuf, line);
+		push_back_line(buffer, line);
 		total += strlen(buf);
 	}
 	fclose(fs);

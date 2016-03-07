@@ -63,12 +63,14 @@ void clrstr(char *str);
 
 /* file.c */
 Buffer *new_buffer(const char *path);
+void delete_buffer(Buffer *buffer);
 Line *new_line(const char *text, int line_no);
+void delete_line(Line *line);
 void push_back_line(Buffer *buffer, Line *line);
 void push_front_line(Buffer *buffer, Line *line);
 void insert_line(Buffer *buffer, Line *line);
 char *read_line(FILE *fs);
-ssize_t read_file(const char *path);
+ssize_t read_file(Buffer *buffer, const char *path);
 ssize_t write_buffer(const char *path);
 
 /* cmds.c */
