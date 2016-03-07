@@ -13,6 +13,7 @@ Buffer *new_buffer(const char *path)
 	else {
 		buffer->path[0] = '\0';
 	}
+	buffer->modified = false;
 	buffer->first_line = NULL;
 	buffer->last_line = NULL;
 	buffer->cur_line = NULL;
@@ -124,6 +125,7 @@ void push_back_line(Buffer *buffer, Line *line)
 		buffer->last_line->next = line;
 		buffer->last_line = line;
 	}
+	buffer->modified = true;
 }
 
 void push_front_line(Buffer *buffer, Line *line)
@@ -141,6 +143,7 @@ void push_front_line(Buffer *buffer, Line *line)
 		buffer->first_line->prev = line;
 		buffer->first_line = line;
 	}
+	buffer->modified = true;
 }
 
 void insert_line(Buffer *buffer, Line *line)
@@ -162,4 +165,5 @@ void insert_line(Buffer *buffer, Line *line)
 		buffer->cur_line->next->prev = line;
 		buffer->cur_line = line;
 	}
+	buffer->modified = true;
 }

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <assert.h>
 
 /* Constants */
@@ -38,6 +39,7 @@ typedef struct Line {
 typedef struct Buffer {
 	/* The path of the associated file */
 	char path[PATH_MAX];
+	bool modified;
 	Line *first_line;
 	Line *last_line;
 	Line *cur_line;
