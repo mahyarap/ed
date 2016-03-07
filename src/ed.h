@@ -81,6 +81,7 @@ void delete_command(Command *command);
 void append(Command *command);
 void find(Command *command);
 void edit(Command *command);
+void read_in(Command *command);
 void write_out(Command *command);
 void quit(Command *command);
 void unknown(Command *command);

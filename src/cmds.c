@@ -14,6 +14,9 @@ function find_function(Command *command)
 	case 'f':
 		func = find;
 		break;
+	case 'r':
+		func = read_in;
+		break;
 	case 'w':
 		func = write_out;
 		break;
@@ -133,6 +136,33 @@ void edit(Command *command)
 		return;
 	}
 	buffer->modified = false;
+	printf("%ld\n", retval);
+}
+
+void read_in(Command *command)
+{
+	ssize_t retval;
+	char path[PATH_MAX];
+
+	if (curbuf->modified) {
+		curbuf->modified = false;
+		unknown(command);
+		return;
+	}
+	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
+		unknown(command);
+		return;
+	}
+
+	strcpy(path, (strlen(command->arg) != 0) ? command->arg : curbuf->path);
+	if (strlen(curbuf->path) == 0) {
+		strcpy(curbuf->path, path);
+	}
+	retval = read_file(curbuf, path);
+	if (retval < 0) {
+		unknown(command);
+		return;
+	}
 	printf("%ld\n", retval);
 }
 
