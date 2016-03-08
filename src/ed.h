@@ -1,5 +1,9 @@
 #ifndef ED_H
 #define ED_H
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
@@ -85,4 +89,5 @@ void read_in(Command *command);
 void write_out(Command *command);
 void quit(Command *command);
 void unknown(Command *command);
+
 #endif

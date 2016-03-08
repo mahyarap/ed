@@ -23,7 +23,7 @@ If 'file' begins with a '!', read output of shell command.");
 
 void print_version()
 {
-	printf("Ed %s\n", "0.0.1");
+	printf("Ed %s\n", VERSION);
 }
 
 int ed()
