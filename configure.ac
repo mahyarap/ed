@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([ed], [0.0.1], [mahyar.abaspour@gmail.com])
+AC_INIT([ed], [0.1.0], [mahyar.abaspour@gmail.com])
 AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror])
 AC_CONFIG_SRCDIR([src/ed.c])
 AC_CONFIG_HEADERS([config.h])
