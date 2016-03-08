@@ -2,4 +2,4 @@ sudo: required
 dist: trusty
 language: c
 compiler: gcc
-script: ./autogen.sh && ./configure && make && make test
+script: ./autogen.sh && ./configure && make && make check
