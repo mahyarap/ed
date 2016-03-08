@@ -11,7 +11,9 @@ Makefile.in
 /compile
 /config.h.in
 /configure.scan
+/configure
 /depcomp
+/install-sh
 /missing
 /stamp-h1
 # Object files
