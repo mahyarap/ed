@@ -21,7 +21,7 @@ void clrstr(char *str)
 	}
 
 	while (*str != '\0') {
-		*str == '\0';
+		*str = '\0';
 		str++;
 	}
 }
