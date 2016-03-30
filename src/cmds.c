@@ -251,18 +251,17 @@ void print(Command *command)
 void read_in(Command *command)
 {
 	ssize_t retval;
-	char path[PATH_MAX];
 
 	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
 		unknown(command);
 		return;
 	}
 
-	strcpy(path, (strlen(command->arg) != 0) ? command->arg : curbuf->path);
 	if (strlen(curbuf->path) == 0) {
-		strcpy(curbuf->path, path);
+		strcpy(curbuf->path, command->arg);
 	}
-	retval = read_file(curbuf, path);
+	retval = read_file(curbuf,
+			(strlen(command->arg) != 0) ? command->arg : curbuf->path);
 	if (retval < 0) {
 		unknown(command);
 		return;
