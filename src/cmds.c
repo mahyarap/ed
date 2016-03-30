@@ -306,7 +306,11 @@ void write_out(Command *command)
 
 void quit(Command *command)
 {
-	/* TODO: Check if buffer was modified before exit */
+	if (curbuf->modified) {
+		curbuf->modified = false;
+		unknown(command);
+		return;
+	}
 	exit(EXIT_SUCCESS);
 }
 
