@@ -4,7 +4,7 @@
 
 static regex_t regex;
 static char *pattern =
-	"^(([$0-9]+)(,([$0-9]+))?)?([a-z])?[[:blank:]]*([[:print:]]*)$";
+	"^(([.$0-9]+)(,([.$0-9]+))?)?([a-z])?[[:blank:]]*([[:print:]]*)$";
 static const size_t nmatch = 6 + 1;
 
 #define CMD_RANGE_BEG 2
@@ -108,6 +108,9 @@ Command *parse_command(Command *command, const char *cmdstr)
 			if (strcmp(tmpstr, "$") == 0) {
 				command->range.beg = curbuf->last_line->line_no;
 			}
+			else if (strcmp(tmpstr, ".") == 0) {
+				command->range.beg = curbuf->cur_line->line_no;
+			}
 			else {
 				converted = strtol(tmpstr, NULL, 10);
 				if (converted != LONG_MAX) {
@@ -128,6 +131,9 @@ Command *parse_command(Command *command, const char *cmdstr)
 			tmpstr[end] = '\0';
 			if (strcmp(tmpstr, "$") == 0) {
 				command->range.end = curbuf->last_line->line_no;
+			}
+			else if (strcmp(tmpstr, ".") == 0) {
+				command->range.end = curbuf->cur_line->line_no;
 			}
 			else {
 				converted = strtol(tmpstr, NULL, 10);
