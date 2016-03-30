@@ -147,7 +147,6 @@ Command *parse_command(Command *command, const char *cmdstr)
 
 void append(Command *command)
 {
-	int ch;
 	int line_no;
 	char *charbuf;
 
