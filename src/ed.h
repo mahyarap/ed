@@ -17,9 +17,9 @@
 
 typedef struct Range {
 	/* Beginning line */
-	int beg;
+	long beg;
 	/* Ending line */
-	int end;
+	long end;
 } Range;
 
 typedef struct Command {
@@ -78,9 +78,10 @@ ssize_t read_file(Buffer *buffer, const char *path);
 ssize_t write_buffer(const char *path);
 
 /* cmds.c */
+void init_regex();
 function find_function(Command *command);
-Command *parse_command(Command *command, char *cmdstr);
-Command *new_command(char *cmdstr);
+Command *parse_command(Command *command, const char *cmdstr);
+Command *new_command(const char *cmdstr);
 void delete_command(Command *command);
 void append(Command *command);
 void find(Command *command);

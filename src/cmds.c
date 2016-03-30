@@ -1,5 +1,27 @@
 #include "ed.h"
 #include <string.h>
+#include <regex.h>
+
+static regex_t regex;
+static char *pattern =
+	"^(([0-9]+)(,([0-9]+)?))?([a-z])[[:blank:]]*([[:print:]]*)$";
+static const size_t nmatch = 6 + 1;
+
+#define CMD_RANGE_BEG 2
+#define CMD_RANGE_END 4
+#define CMD_CMD       5
+#define CMD_ARG       6
+
+void init_regex()
+{
+	int retval;
+
+	memset(&regex, 0, sizeof(regex_t));
+	retval = regcomp(&regex, pattern, REG_EXTENDED);
+	if (retval != 0) {
+		exit(EXIT_FAILURE);
+	}
+}
 
 function find_function(Command *command)
 {
@@ -30,13 +52,13 @@ function find_function(Command *command)
 	return func;
 }
 
-Command *new_command(char *cmdstr)
+Command *new_command(const char *cmdstr)
 {
 	Command *command;
 
 	command = malloc(sizeof(Command));
-	command->range.beg = 0;
-	command->range.end = 0;
+	command->range.beg = -1;
+	command->range.end = -1;
 	command->cmd = '\0';
 	command->arg = charalloc(BUFFSIZE);
 
@@ -50,28 +72,73 @@ void delete_command(Command *command)
 	free(command);
 }
 
-Command *parse_command(Command *command, char *cmdstr)
+Command *parse_command(Command *command, const char *cmdstr)
 {
 	if (cmdstr == NULL || strlen(cmdstr) == 0) {
 		return command;
 	}
 
-	strstrip(cmdstr);
-	if (strlen(cmdstr) == 1) {
-		command->cmd = cmdstr[0];
+	int retval;
+	char *cmd_copy;
+	regmatch_t match[nmatch];
+
+	cmd_copy = charalloc(strlen(cmdstr));
+	strcpy(cmd_copy, cmdstr);
+	/* NOTE: newline must be removed */
+	strstrip(cmd_copy);
+	retval = regexec(&regex, cmd_copy, nmatch, match, 0);
+	if (retval == REG_NOMATCH) {
 		return command;
 	}
-	/* This is temporary. I just for the moment, allow one command
-	 * and one argument, without any range. In the future, I'll add
-	 * support for parsing a full command with all its components. */
-	char *cmd, *arg;
 
-	cmd = strtok(cmdstr, " ");
-	command->cmd = (cmd != NULL) ? cmd[0] : '\0';
-	arg = strtok(NULL, " ");
-	if (arg != NULL && strlen(arg) != 0) {
-		strcpy(command->arg, arg);
+	int len = strlen(cmd_copy);
+	char *tmpstr = charalloc(len);
+	if (match[CMD_RANGE_BEG].rm_so != -1) {
+		int beg = match[CMD_RANGE_BEG].rm_so;
+		int end = match[CMD_RANGE_BEG].rm_eo;
+
+		if (beg - end < len) {
+			long converted;
+
+			strncpy(tmpstr, cmd_copy + beg, end - beg);
+			tmpstr[end] = '\0';
+			converted = strtol(tmpstr, NULL, 10);
+			if (converted != LONG_MAX) {
+				command->range.beg = converted;
+			}
+			clrstr(tmpstr);
+		}
 	}
+	if (match[CMD_RANGE_END].rm_so != -1) {
+		int beg = match[CMD_RANGE_END].rm_so;
+		int end = match[CMD_RANGE_END].rm_eo;
+
+		if (beg - end < len) {
+			long converted;
+
+			strncpy(tmpstr, cmd_copy + beg, end - beg);
+			tmpstr[end] = '\0';
+			converted = strtol(tmpstr, NULL, 10);
+			if (converted != LONG_MAX) {
+				command->range.end = converted;
+			}
+			clrstr(tmpstr);
+		}
+	}
+	if (match[CMD_CMD].rm_so != -1) {
+		command->cmd = cmd_copy[match[CMD_CMD].rm_so];
+	}
+	if (match[CMD_ARG].rm_so != -1) {
+		int beg = match[CMD_ARG].rm_so;
+		int end = match[CMD_ARG].rm_eo;
+
+		if (beg - end < BUFFSIZE) {
+			strcpy(command->arg, cmd_copy + beg);
+		}
+	}
+	free(tmpstr);
+	free(cmd_copy);
+
 	return command;
 }
 
@@ -192,6 +259,7 @@ void write_out(Command *command)
 
 void quit(Command *command)
 {
+	/* TODO: Check if buffer was modified before exit */
 	exit(EXIT_SUCCESS);
 }
 
