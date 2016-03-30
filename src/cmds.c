@@ -147,7 +147,6 @@ Command *parse_command(Command *command, const char *cmdstr)
 
 void append(Command *command)
 {
-	int ch;
 	int line_no;
 	char *charbuf;
 
@@ -216,6 +215,10 @@ void print(Command *command)
 	beg_no = command->range.beg;
 	end_no = command->range.end;
 
+	if (curbuf->first_line == NULL) {
+		unknown(command);
+		return;
+	}
 	if (beg_no > curbuf->last_line->line_no ||
 			end_no > curbuf->last_line->line_no) {
 		unknown(command);
@@ -251,26 +254,27 @@ void print(Command *command)
 void read_in(Command *command)
 {
 	ssize_t retval;
-	char path[PATH_MAX];
 
-	if (curbuf->modified) {
-		curbuf->modified = false;
-		unknown(command);
-		return;
-	}
 	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
 		unknown(command);
 		return;
 	}
 
-	strcpy(path, (strlen(command->arg) != 0) ? command->arg : curbuf->path);
 	if (strlen(curbuf->path) == 0) {
-		strcpy(curbuf->path, path);
+		strcpy(curbuf->path, command->arg);
 	}
-	retval = read_file(curbuf, path);
+	retval = read_file(curbuf,
+			(strlen(command->arg) != 0) ? command->arg : curbuf->path);
 	if (retval < 0) {
 		unknown(command);
 		return;
+	}
+
+	/* Renumber the buffer */
+	int i;
+	Line *p;
+	for (i = 1, p = curbuf->first_line; p != NULL; p = p->next, i++) {
+		p->line_no = i;
 	}
 	printf("%ld\n", retval);
 }
@@ -301,7 +305,11 @@ void write_out(Command *command)
 
 void quit(Command *command)
 {
-	/* TODO: Check if buffer was modified before exit */
+	if (curbuf->modified) {
+		curbuf->modified = false;
+		unknown(command);
+		return;
+	}
 	exit(EXIT_SUCCESS);
 }
 
