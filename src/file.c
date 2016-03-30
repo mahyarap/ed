@@ -103,6 +103,7 @@ ssize_t read_file(Buffer *buffer, const char *path)
 		push_back_line(buffer, line);
 		total += strlen(buf);
 	}
+	buffer->cur_line = curbuf->last_line;
 	fclose(fs);
 	return total;
 }
