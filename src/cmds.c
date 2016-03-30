@@ -4,7 +4,7 @@
 
 static regex_t regex;
 static char *pattern =
-	"^(([$0-9]+)(,([$0-9]+))?)?([a-z])[[:blank:]]*([[:print:]]*)$";
+	"^(([$0-9]+)(,([$0-9]+))?)?([a-z])?[[:blank:]]*([[:print:]]*)$";
 static const size_t nmatch = 6 + 1;
 
 #define CMD_RANGE_BEG 2
@@ -140,6 +140,9 @@ Command *parse_command(Command *command, const char *cmdstr)
 	}
 	if (match[CMD_CMD].rm_so != -1) {
 		command->cmd = cmd_copy[match[CMD_CMD].rm_so];
+	}
+	else if (command->range.beg > 0) {
+		command->cmd = 'p';
 	}
 	if (match[CMD_ARG].rm_so != -1) {
 		int beg = match[CMD_ARG].rm_so;
