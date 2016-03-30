@@ -253,11 +253,6 @@ void read_in(Command *command)
 	ssize_t retval;
 	char path[PATH_MAX];
 
-	if (curbuf->modified) {
-		curbuf->modified = false;
-		unknown(command);
-		return;
-	}
 	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
 		unknown(command);
 		return;
