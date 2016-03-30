@@ -270,6 +270,13 @@ void read_in(Command *command)
 		unknown(command);
 		return;
 	}
+
+	/* Renumber the buffer */
+	int i;
+	Line *p;
+	for (i = 1, p = curbuf->first_line; p != NULL; p = p->next, i++) {
+		p->line_no = i;
+	}
 	printf("%ld\n", retval);
 }
 
