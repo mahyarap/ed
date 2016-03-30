@@ -216,6 +216,10 @@ void print(Command *command)
 	beg_no = command->range.beg;
 	end_no = command->range.end;
 
+	if (curbuf->first_line == NULL) {
+		unknown(command);
+		return;
+	}
 	if (beg_no > curbuf->last_line->line_no ||
 			end_no > curbuf->last_line->line_no) {
 		unknown(command);
