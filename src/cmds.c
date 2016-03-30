@@ -4,7 +4,7 @@
 
 static regex_t regex;
 static char *pattern =
-	"^(([0-9]+)(,([0-9]+)?))?([a-z])[[:blank:]]*([[:print:]]*)$";
+	"^(([0-9]+)(,([0-9]+))?)?([a-z])[[:blank:]]*([[:print:]]*)$";
 static const size_t nmatch = 6 + 1;
 
 #define CMD_RANGE_BEG 2
@@ -35,6 +35,9 @@ function find_function(Command *command)
 		break;
 	case 'f':
 		func = find;
+		break;
+	case 'p':
+		func = print;
 		break;
 	case 'r':
 		func = read_in;
@@ -204,6 +207,45 @@ void edit(Command *command)
 	}
 	buffer->modified = false;
 	printf("%ld\n", retval);
+}
+
+void print(Command *command)
+{
+	long beg_no, end_no;
+
+	beg_no = command->range.beg;
+	end_no = command->range.end;
+
+	if (beg_no > curbuf->last_line->line_no ||
+			end_no > curbuf->last_line->line_no) {
+		unknown(command);
+		return;
+	}
+
+	if (beg_no == -1 && end_no == -1) {
+		beg_no = curbuf->cur_line->line_no;
+		end_no = curbuf->cur_line->line_no;
+	}
+	else if (beg_no > 0 && end_no == -1) {
+		end_no = beg_no;
+	}
+	else if (beg_no > 0 && end_no > 0 && beg_no <= end_no) {
+		/* legal */
+	}
+	else {
+		unknown(command);
+		return;
+	}
+
+	Line *beg;
+	for (beg = curbuf->first_line; beg->line_no != beg_no; beg = beg->next);
+	Line *end;
+	for (end = curbuf->first_line; end->line_no != end_no; end = end->next);
+
+	Line *p;
+	for (p = beg; p != NULL && p->line_no <= end->line_no; p = p->next) {
+		printf("%s", p->text);
+	}
 }
 
 void read_in(Command *command)
