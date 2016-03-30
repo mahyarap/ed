@@ -63,7 +63,7 @@ Command *new_command(const char *cmdstr)
 	command->range.beg = -1;
 	command->range.end = -1;
 	command->cmd = '\0';
-	command->arg = charalloc(BUFFSIZE);
+	command->arg = charalloc(PATH_MAX);
 
 	parse_command(command, cmdstr);
 	return command;
@@ -281,25 +281,22 @@ void read_in(Command *command)
 
 void write_out(Command *command)
 {
-	char *path;
-	ssize_t retval;
-
-	if (strlen(curbuf->path) == 0) {
-		if (strlen(command->arg) != 0) {
-			strcpy(curbuf->path, command->arg);
-		}
-		else {
-			unknown(command);
-			return;
-		}
+	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
+		unknown(command);
+		return;
 	}
 
-	path = (strlen(command->arg) != 0) ? command->arg : curbuf->path;
-	retval = write_buffer(path);
+	if (strlen(curbuf->path) == 0) {
+		strcpy(curbuf->path, command->arg);
+	}
+	ssize_t retval;
+	retval = write_buffer(
+			(strlen(command->arg) != 0) ? command->arg : curbuf->path);
 	if (retval < 0) {
 		unknown(command);
 		return;
 	}
+	curbuf->modified = false;
 	printf("%ld\n", retval);
 }
 
