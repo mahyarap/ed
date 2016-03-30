@@ -26,15 +26,27 @@ void print_version()
 	printf("Ed %s\n", VERSION);
 }
 
-int ed()
+int ed(int argc, char **argv)
 {
 	char *cmdstr;
 	Command *command;
 	function func;
 
 	init_regex();
-	cmdstr = charalloc(BUFFSIZE);
-	curbuf = new_buffer(NULL);
+
+	cmdstr = charalloc(PATH_MAX + BUFFSIZE);
+	if (argc > 0) {
+		curbuf = new_buffer(argv[0]);
+		sprintf(cmdstr, "e %s\n", curbuf->path);
+		command = new_command(cmdstr);
+		edit(command);
+		clrstr(cmdstr);
+		delete_command(command);
+	}
+	else {
+		curbuf = new_buffer(NULL);
+	}
+
 	/* Main Loop
 	 *
 	 * Get a command
@@ -91,7 +103,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	retval = ed();
+	retval = ed(argc - optind, argv + optind);
 
 	return retval;
 }
