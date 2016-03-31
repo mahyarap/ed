@@ -4,7 +4,7 @@
 
 static regex_t regex;
 static char *pattern =
-	"^(([0-9]+)(,([0-9]+))?)?([a-z])[[:blank:]]*([[:print:]]*)$";
+	"^(([.$0-9]+)(,([.$0-9]+))?)?([a-z])?[[:blank:]]*([[:print:]]*)$";
 static const size_t nmatch = 6 + 1;
 
 #define CMD_RANGE_BEG 2
@@ -105,11 +105,19 @@ Command *parse_command(Command *command, const char *cmdstr)
 
 			strncpy(tmpstr, cmd_copy + beg, end - beg);
 			tmpstr[end] = '\0';
-			converted = strtol(tmpstr, NULL, 10);
-			if (converted != LONG_MAX) {
-				command->range.beg = converted;
+			if (strcmp(tmpstr, "$") == 0) {
+				command->range.beg = curbuf->last_line->line_no;
 			}
-			clrstr(tmpstr);
+			else if (strcmp(tmpstr, ".") == 0) {
+				command->range.beg = curbuf->cur_line->line_no;
+			}
+			else {
+				converted = strtol(tmpstr, NULL, 10);
+				if (converted != LONG_MAX) {
+					command->range.beg = converted;
+				}
+				clrstr(tmpstr);
+			}
 		}
 	}
 	if (match[CMD_RANGE_END].rm_so != -1) {
@@ -121,15 +129,26 @@ Command *parse_command(Command *command, const char *cmdstr)
 
 			strncpy(tmpstr, cmd_copy + beg, end - beg);
 			tmpstr[end] = '\0';
-			converted = strtol(tmpstr, NULL, 10);
-			if (converted != LONG_MAX) {
-				command->range.end = converted;
+			if (strcmp(tmpstr, "$") == 0) {
+				command->range.end = curbuf->last_line->line_no;
 			}
-			clrstr(tmpstr);
+			else if (strcmp(tmpstr, ".") == 0) {
+				command->range.end = curbuf->cur_line->line_no;
+			}
+			else {
+				converted = strtol(tmpstr, NULL, 10);
+				if (converted != LONG_MAX) {
+					command->range.end = converted;
+				}
+				clrstr(tmpstr);
+			}
 		}
 	}
 	if (match[CMD_CMD].rm_so != -1) {
 		command->cmd = cmd_copy[match[CMD_CMD].rm_so];
+	}
+	else if (command->range.beg > 0) {
+		command->cmd = 'p';
 	}
 	if (match[CMD_ARG].rm_so != -1) {
 		int beg = match[CMD_ARG].rm_so;
