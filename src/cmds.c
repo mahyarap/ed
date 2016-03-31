@@ -12,6 +12,10 @@ static const size_t nmatch = 6 + 1;
 #define REGEX_CMD       5
 #define REGEX_ARG       6
 
+#define RANGE_NOTSET -1
+#define RANGE_DOT    -2
+#define RANGE_DOLLAR -3
+
 void init_regex()
 {
 	int retval;
@@ -106,12 +110,10 @@ Command *parse_command(Command *command, const char *cmdstr)
 			strncpy(tmpstr, cmd_copy + beg, end - beg);
 			tmpstr[end] = '\0';
 			if (strcmp(tmpstr, "$") == 0) {
-				command->range.beg = (curbuf->last_line != NULL) ?
-					curbuf->last_line->line_no : -1;
+				command->range.beg = RANGE_DOLLAR;
 			}
 			else if (strcmp(tmpstr, ".") == 0) {
-				command->range.beg = (curbuf->cur_line != NULL) ?
-					curbuf->cur_line->line_no : -1;
+				command->range.beg = RANGE_DOT;
 			}
 			else {
 				converted = strtol(tmpstr, NULL, 10);
@@ -132,12 +134,10 @@ Command *parse_command(Command *command, const char *cmdstr)
 			strncpy(tmpstr, cmd_copy + beg, end - beg);
 			tmpstr[end] = '\0';
 			if (strcmp(tmpstr, "$") == 0) {
-				command->range.end = (curbuf->last_line != NULL) ?
-					curbuf->last_line->line_no : -1;
+				command->range.end = RANGE_DOLLAR;
 			}
 			else if (strcmp(tmpstr, ".") == 0) {
-				command->range.end = (curbuf->cur_line != NULL) ?
-					curbuf->cur_line->line_no : -1;
+				command->range.end = RANGE_DOT;
 			}
 			else {
 				converted = strtol(tmpstr, NULL, 10);
