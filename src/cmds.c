@@ -106,10 +106,12 @@ Command *parse_command(Command *command, const char *cmdstr)
 			strncpy(tmpstr, cmd_copy + beg, end - beg);
 			tmpstr[end] = '\0';
 			if (strcmp(tmpstr, "$") == 0) {
-				command->range.beg = curbuf->last_line->line_no;
+				command->range.beg = (curbuf->last_line != NULL) ?
+					curbuf->last_line->line_no : -1;
 			}
 			else if (strcmp(tmpstr, ".") == 0) {
-				command->range.beg = curbuf->cur_line->line_no;
+				command->range.beg = (curbuf->cur_line != NULL) ?
+					curbuf->cur_line->line_no : -1;
 			}
 			else {
 				converted = strtol(tmpstr, NULL, 10);
@@ -130,10 +132,12 @@ Command *parse_command(Command *command, const char *cmdstr)
 			strncpy(tmpstr, cmd_copy + beg, end - beg);
 			tmpstr[end] = '\0';
 			if (strcmp(tmpstr, "$") == 0) {
-				command->range.end = curbuf->last_line->line_no;
+				command->range.end = (curbuf->last_line != NULL) ?
+					curbuf->last_line->line_no : -1;
 			}
 			else if (strcmp(tmpstr, ".") == 0) {
-				command->range.end = curbuf->cur_line->line_no;
+				command->range.end = (curbuf->cur_line != NULL) ?
+					curbuf->cur_line->line_no : -1;
 			}
 			else {
 				converted = strtol(tmpstr, NULL, 10);
