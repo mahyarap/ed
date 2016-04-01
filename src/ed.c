@@ -57,6 +57,7 @@ int ed(int argc, char **argv)
 		command = new_command(cmdstr);
 		retval = parse_command(command, cmdstr);
 		if (retval != 0) {
+			unknown(command);
 			clrstr(cmdstr);
 			delete_command(command);
 			continue;
