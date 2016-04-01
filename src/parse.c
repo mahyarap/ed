@@ -233,8 +233,9 @@ static int parse_phase_3(Command *command)
 			curbuf->cur_line->line_no : RANGE_INVALID;
 		break;
 	case RANGE_DOLLAR:
-			end = (curbuf->last_line != NULL) ?
+		end = (curbuf->last_line != NULL) ?
 			curbuf->last_line->line_no : RANGE_INVALID;
+		break;
 	case RANGE_NOTSET:
 		end = beg;
 		break;
