@@ -33,6 +33,11 @@ void delete_buffer(Buffer *buffer)
 	free(buffer);
 }
 
+bool is_empty_buffer(Buffer *buffer)
+{
+	return (buffer->first_line == NULL && buffer->last_line == NULL);
+}
+
 Line *new_line(const char *text, int line_no)
 {
 	Line *line;
@@ -146,6 +151,28 @@ void push_back_line(Buffer *buffer, Line *line)
 	buffer->modified = true;
 }
 
+void pop_back_line(Buffer *buffer)
+{
+	assert(buffer != NULL);
+
+	if (is_empty_buffer(buffer)) {
+		return;
+	}
+
+	Line *tmp = buffer->last_line;
+	if (buffer->first_line == buffer->last_line) {
+		buffer->first_line = NULL;
+		buffer->last_line = NULL;
+		buffer->cur_line = NULL;
+	}
+	else {
+		buffer->last_line = buffer->last_line->prev;
+		buffer->cur_line = buffer->last_line->prev;
+	}
+	delete_line(tmp);
+	buffer->modified = true;
+}
+
 void push_front_line(Buffer *buffer, Line *line)
 {
 	assert(buffer != NULL);
@@ -161,6 +188,28 @@ void push_front_line(Buffer *buffer, Line *line)
 		buffer->first_line->prev = line;
 		buffer->first_line = line;
 	}
+	buffer->modified = true;
+}
+
+void pop_front_line(Buffer *buffer)
+{
+	assert(buffer != NULL);
+
+	if (is_empty_buffer(buffer)) {
+		return;
+	}
+
+	Line *tmp = buffer->first_line;
+	if (buffer->first_line == buffer->last_line) {
+		buffer->first_line = NULL;
+		buffer->last_line = NULL;
+		buffer->cur_line = NULL;
+	}
+	else {
+		buffer->first_line = buffer->first_line->next;
+		buffer->cur_line = buffer->first_line->next;
+	}
+	delete_line(tmp);
 	buffer->modified = true;
 }
 
@@ -184,4 +233,24 @@ void insert_line(Buffer *buffer, Line *line)
 		buffer->cur_line = line;
 	}
 	buffer->modified = true;
+}
+
+void remove_line(Buffer *buffer, Line *line)
+{
+	if (is_empty_buffer(buffer)) {
+		return;
+	}
+
+	if (line == buffer->first_line) {
+		pop_front_line(buffer);
+	}
+	else if (line == buffer->last_line) {
+		pop_back_line(buffer);
+	}
+	else {
+		line->prev->next = line->next;
+		line->next->prev = line->prev;
+		delete_line(line);
+		buffer->modified = true;
+	}
 }
