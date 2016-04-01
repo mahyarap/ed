@@ -5,4 +5,5 @@ ed_SOURCES = \
 			 src/ed.h \
 			 src/file.c \
 			 src/globals.c \
+			 src/parse.c \
 			 src/utils.c

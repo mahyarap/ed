@@ -2,31 +2,6 @@
 #include <string.h>
 #include <regex.h>
 
-static regex_t regex;
-static char *pattern =
-	"^(([.$0-9]+)(,([.$0-9]+))?)?([a-z])?[[:blank:]]*([[:print:]]*)$";
-static const size_t nmatch = 6 + 1;
-
-#define REGEX_RANGE_BEG 2
-#define REGEX_RANGE_END 4
-#define REGEX_CMD       5
-#define REGEX_ARG       6
-
-#define RANGE_NOTSET -1
-#define RANGE_DOT    -2
-#define RANGE_DOLLAR -3
-
-void init_regex()
-{
-	int retval;
-
-	memset(&regex, 0, sizeof(regex_t));
-	retval = regcomp(&regex, pattern, REG_EXTENDED);
-	if (retval != 0) {
-		exit(EXIT_FAILURE);
-	}
-}
-
 function find_function(Command *command)
 {
 	function func;
@@ -69,7 +44,6 @@ Command *new_command(const char *cmdstr)
 	command->cmd = '\0';
 	command->arg = charalloc(PATH_MAX);
 
-	parse_command(command, cmdstr);
 	return command;
 }
 
@@ -77,95 +51,6 @@ void delete_command(Command *command)
 {
 	free(command->arg);
 	free(command);
-}
-
-Command *parse_command(Command *command, const char *cmdstr)
-{
-	if (cmdstr == NULL || strlen(cmdstr) == 0) {
-		return command;
-	}
-
-	int retval;
-	char *cmd_copy;
-	regmatch_t match[nmatch];
-
-	cmd_copy = charalloc(strlen(cmdstr));
-	strcpy(cmd_copy, cmdstr);
-	/* NOTE: newline must be removed */
-	strstrip(cmd_copy);
-	retval = regexec(&regex, cmd_copy, nmatch, match, 0);
-	if (retval == REG_NOMATCH) {
-		return command;
-	}
-
-	int len = strlen(cmd_copy);
-	char *tmpstr = charalloc(len);
-	if (match[REGEX_RANGE_BEG].rm_so != -1) {
-		int beg = match[REGEX_RANGE_BEG].rm_so;
-		int end = match[REGEX_RANGE_BEG].rm_eo;
-
-		if (beg - end < len) {
-			long converted;
-
-			strncpy(tmpstr, cmd_copy + beg, end - beg);
-			tmpstr[end] = '\0';
-			if (strcmp(tmpstr, "$") == 0) {
-				command->range.beg = RANGE_DOLLAR;
-			}
-			else if (strcmp(tmpstr, ".") == 0) {
-				command->range.beg = RANGE_DOT;
-			}
-			else {
-				converted = strtol(tmpstr, NULL, 10);
-				if (converted != LONG_MAX) {
-					command->range.beg = converted;
-				}
-				clrstr(tmpstr);
-			}
-		}
-	}
-	if (match[REGEX_RANGE_END].rm_so != -1) {
-		int beg = match[REGEX_RANGE_END].rm_so;
-		int end = match[REGEX_RANGE_END].rm_eo;
-
-		if (beg - end < len) {
-			long converted;
-
-			strncpy(tmpstr, cmd_copy + beg, end - beg);
-			tmpstr[end] = '\0';
-			if (strcmp(tmpstr, "$") == 0) {
-				command->range.end = RANGE_DOLLAR;
-			}
-			else if (strcmp(tmpstr, ".") == 0) {
-				command->range.end = RANGE_DOT;
-			}
-			else {
-				converted = strtol(tmpstr, NULL, 10);
-				if (converted != LONG_MAX) {
-					command->range.end = converted;
-				}
-				clrstr(tmpstr);
-			}
-		}
-	}
-	if (match[REGEX_CMD].rm_so != -1) {
-		command->cmd = cmd_copy[match[REGEX_CMD].rm_so];
-	}
-	else if (command->range.beg > 0) {
-		command->cmd = 'p';
-	}
-	if (match[REGEX_ARG].rm_so != -1) {
-		int beg = match[REGEX_ARG].rm_so;
-		int end = match[REGEX_ARG].rm_eo;
-
-		if (beg - end < BUFFSIZE) {
-			strcpy(command->arg, cmd_copy + beg);
-		}
-	}
-	free(tmpstr);
-	free(cmd_copy);
-
-	return command;
 }
 
 void append(Command *command)
@@ -237,28 +122,7 @@ void print(Command *command)
 
 	beg_no = command->range.beg;
 	end_no = command->range.end;
-
-	if (curbuf->first_line == NULL) {
-		unknown(command);
-		return;
-	}
-	if (beg_no > curbuf->last_line->line_no ||
-			end_no > curbuf->last_line->line_no) {
-		unknown(command);
-		return;
-	}
-
-	if (beg_no == -1 && end_no == -1) {
-		beg_no = curbuf->cur_line->line_no;
-		end_no = curbuf->cur_line->line_no;
-	}
-	else if (beg_no > 0 && end_no == -1) {
-		end_no = beg_no;
-	}
-	else if (beg_no > 0 && end_no > 0 && beg_no <= end_no) {
-		/* legal */
-	}
-	else {
+	if (beg_no < 1 || end_no < 1) {
 		unknown(command);
 		return;
 	}
