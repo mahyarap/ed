@@ -2,12 +2,18 @@
 #include <string.h>
 #include <regex.h>
 
+static void renumber_buffer(Buffer *buffer);
+static Line *find_line(long line_no);
+
 function find_function(Command *command)
 {
 	function func;
 	switch (command->cmd) {
 	case 'a':
 		func = append;
+		break;
+	case 'd':
+		func = delete;
 		break;
 	case 'e':
 		func = edit;
@@ -70,14 +76,26 @@ void append(Command *command)
 	}
 }
 
-void find(Command *command)
+void delete(Command *command)
 {
-	if (strlen(curbuf->path) != 0) {
-		puts(curbuf->path);
-	}
-	else {
+	long beg_no, end_no;
+
+	beg_no = command->range.beg;
+	end_no = command->range.end;
+	if (beg_no < 1 || end_no < 1) {
 		unknown(command);
+		return;
 	}
+
+	Line *beg, *end;
+	beg = find_line(beg_no);
+	end = find_line(end_no);
+
+	Line *p;
+	for (p = beg; p != NULL && p->line_no <= end->line_no; p = p->next) {
+		remove_line(curbuf, p);
+	}
+	renumber_buffer(curbuf);
 }
 
 void edit(Command *command)
@@ -116,6 +134,16 @@ void edit(Command *command)
 	printf("%ld\n", retval);
 }
 
+void find(Command *command)
+{
+	if (strlen(curbuf->path) != 0) {
+		puts(curbuf->path);
+	}
+	else {
+		unknown(command);
+	}
+}
+
 void print(Command *command)
 {
 	long beg_no, end_no;
@@ -127,10 +155,9 @@ void print(Command *command)
 		return;
 	}
 
-	Line *beg;
-	for (beg = curbuf->first_line; beg->line_no != beg_no; beg = beg->next);
-	Line *end;
-	for (end = curbuf->first_line; end->line_no != end_no; end = end->next);
+	Line *beg, *end;
+	beg = find_line(beg_no);
+	end = find_line(end_no);
 
 	Line *p;
 	for (p = beg; p != NULL && p->line_no <= end->line_no; p = p->next) {
@@ -157,12 +184,7 @@ void read_in(Command *command)
 		return;
 	}
 
-	/* Renumber the buffer */
-	int i;
-	Line *p;
-	for (i = 1, p = curbuf->first_line; p != NULL; p = p->next, i++) {
-		p->line_no = i;
-	}
+	renumber_buffer(curbuf);
 	printf("%ld\n", retval);
 }
 
@@ -200,4 +222,23 @@ void quit(Command *command)
 void unknown(Command *command)
 {
 	puts("?");
+}
+
+static void renumber_buffer(Buffer *buffer)
+{
+	int i;
+	Line *p;
+
+	for (i = 1, p = curbuf->first_line; p != NULL; p = p->next, i++) {
+		p->line_no = i;
+	}
+}
+
+static Line *find_line(long line_no)
+{
+	Line *line;
+
+	for (line = curbuf->first_line; line->line_no != line_no;
+			line = line->next);
+	return line;
 }
