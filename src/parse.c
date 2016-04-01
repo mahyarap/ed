@@ -4,13 +4,13 @@
 
 static regex_t regex;
 static char *pattern =
-	"^(([.$0-9]+)(,([.$0-9]+))?)?([a-z])?[[:blank:]]*([[:print:]]*)$";
-static const size_t nmatch = 6 + 1;
+	"^(([.$0-9]+)(,([.$0-9]+))?)?(([a-z])[[:blank:]]*([[:print:]]*))?$";
+static const size_t nmatch = 7 + 1;
 
 #define REGEX_RANGE_BEG 2
 #define REGEX_RANGE_END 4
-#define REGEX_CMD       5
-#define REGEX_ARG       6
+#define REGEX_CMD       6
+#define REGEX_ARG       7
 
 #define RANGE_INVALID 0
 #define RANGE_NOTSET -1
@@ -223,7 +223,7 @@ static int parse_phase_3(Command *command)
 		break;
 	default:
 		/* beg > 0 */
-		if (curbuf->last_line == NULL || beg > curbuf->cur_line->line_no) {
+		if (curbuf->last_line == NULL || beg > curbuf->last_line->line_no) {
 			beg = RANGE_INVALID;
 		}
 	}
@@ -241,7 +241,7 @@ static int parse_phase_3(Command *command)
 		break;
 	default:
 		/* end > 0 */
-		if (curbuf->last_line == NULL || end > curbuf->cur_line->line_no) {
+		if (curbuf->last_line == NULL || end > curbuf->last_line->line_no) {
 			end = RANGE_INVALID;
 		}
 	}
