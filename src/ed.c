@@ -28,6 +28,7 @@ void print_version()
 
 int ed(int argc, char **argv)
 {
+	int retval;
 	char *cmdstr;
 	Command *command;
 	function func;
@@ -54,6 +55,12 @@ int ed(int argc, char **argv)
 	 * Execute the command */
 	while (fgets(cmdstr, BUFFSIZE, stdin) != NULL) {
 		command = new_command(cmdstr);
+		retval = parse_command(command, cmdstr);
+		if (retval != 0) {
+			clrstr(cmdstr);
+			delete_command(command);
+			continue;
+		}
 		func = find_function(command);
 		func(command);
 
