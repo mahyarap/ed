@@ -122,28 +122,7 @@ void print(Command *command)
 
 	beg_no = command->range.beg;
 	end_no = command->range.end;
-
-	if (curbuf->first_line == NULL) {
-		unknown(command);
-		return;
-	}
-	if (beg_no > curbuf->last_line->line_no ||
-			end_no > curbuf->last_line->line_no) {
-		unknown(command);
-		return;
-	}
-
-	if (beg_no == -1 && end_no == -1) {
-		beg_no = curbuf->cur_line->line_no;
-		end_no = curbuf->cur_line->line_no;
-	}
-	else if (beg_no > 0 && end_no == -1) {
-		end_no = beg_no;
-	}
-	else if (beg_no > 0 && end_no > 0 && beg_no <= end_no) {
-		/* legal */
-	}
-	else {
+	if (beg_no < 1 || end_no < 1) {
 		unknown(command);
 		return;
 	}
