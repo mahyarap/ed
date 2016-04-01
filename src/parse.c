@@ -223,7 +223,7 @@ static int parse_phase_3(Command *command)
 		break;
 	default:
 		/* beg > 0 */
-		if (curbuf->last_line == NULL || beg > curbuf->cur_line->line_no) {
+		if (curbuf->last_line == NULL || beg > curbuf->last_line->line_no) {
 			beg = RANGE_INVALID;
 		}
 	}
@@ -241,7 +241,7 @@ static int parse_phase_3(Command *command)
 		break;
 	default:
 		/* end > 0 */
-		if (curbuf->last_line == NULL || end > curbuf->cur_line->line_no) {
+		if (curbuf->last_line == NULL || end > curbuf->last_line->line_no) {
 			end = RANGE_INVALID;
 		}
 	}
