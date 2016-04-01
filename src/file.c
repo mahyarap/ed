@@ -147,6 +147,7 @@ void push_back_line(Buffer *buffer, Line *line)
 		line->next = NULL;
 		buffer->last_line->next = line;
 		buffer->last_line = line;
+		buffer->cur_line = line;
 	}
 	buffer->modified = true;
 }
@@ -167,7 +168,8 @@ void pop_back_line(Buffer *buffer)
 	}
 	else {
 		buffer->last_line = buffer->last_line->prev;
-		buffer->cur_line = buffer->last_line->prev;
+		buffer->last_line->next = NULL;
+		buffer->cur_line = buffer->last_line;
 	}
 	delete_line(tmp);
 	buffer->modified = true;
@@ -187,6 +189,7 @@ void push_front_line(Buffer *buffer, Line *line)
 		line->next = buffer->first_line;
 		buffer->first_line->prev = line;
 		buffer->first_line = line;
+		buffer->cur_line = line;
 	}
 	buffer->modified = true;
 }
@@ -207,7 +210,6 @@ void pop_front_line(Buffer *buffer)
 	}
 	else {
 		buffer->first_line = buffer->first_line->next;
-		buffer->cur_line = buffer->first_line->next;
 	}
 	delete_line(tmp);
 	buffer->modified = true;

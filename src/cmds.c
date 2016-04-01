@@ -92,8 +92,11 @@ void delete(Command *command)
 	end = find_line(end_no);
 
 	Line *p;
-	for (p = beg; p != NULL && p->line_no <= end->line_no; p = p->next) {
+	Line *tmp;
+	for (p = beg; p != NULL && p->line_no <= end->line_no;) {
+		tmp = p->next;
 		remove_line(curbuf, p);
+		p = tmp;
 	}
 	renumber_buffer(curbuf);
 }
