@@ -16,18 +16,18 @@
 /* Data structures */
 
 typedef struct Range {
-	/* Beginning line */
+	/* Starting line */
 	long beg;
 	/* Ending line */
 	long end;
 } Range;
 
 typedef struct Command {
-	/* The range of lines the functions act on */
+	/* The range of lines on which functions operate */
 	Range range;
 	/* A one-character command */
 	char cmd;
-	/* Contains the arguments passed to the functions */
+	/* Contains the arguments passed to functions */
 	char *arg;
 } Command;
 
@@ -60,41 +60,41 @@ typedef void (*function)(Command*);
 /* Function prototypes */
 
 /* Utils.c */
-void strstrip(char *str);
 char *charalloc(size_t len);
 char *charrealloc(char *buffer, size_t len);
 void clrstr(char *str);
+void strstrip(char *str);
 
 /* file.c */
 Buffer *new_buffer(const char *path);
-void delete_buffer(Buffer *buffer);
-bool is_empty_buffer(Buffer *buffer);
 Line *new_line(const char *text, int line_no);
-void delete_line(Line *line);
-void push_back_line(Buffer *buffer, Line *line);
-void pop_back_line(Buffer *buffer);
-void push_front_line(Buffer *buffer, Line *line);
-void pop_front_line(Buffer *buffer);
-void insert_line(Buffer *buffer, Line *line);
-void remove_line(Buffer *buffer, Line *line);
+bool is_empty_buffer(Buffer *buffer);
 char *read_line(FILE *fs);
 ssize_t read_file(Buffer *buffer, const char *path);
 ssize_t write_buffer(const char *path);
+void delete_buffer(Buffer *buffer);
+void delete_line(Line *line);
+void insert_line(Buffer *buffer, Line *line);
+void pop_back_line(Buffer *buffer);
+void pop_front_line(Buffer *buffer);
+void push_back_line(Buffer *buffer, Line *line);
+void push_front_line(Buffer *buffer, Line *line);
+void remove_line(Buffer *buffer, Line *line);
 
 /* cmds.c */
-void init_regex();
+Command *new_command(const char *cmdstr);
 function find_function(Command *command);
 int parse_command(Command *command, const char *cmdstr);
-Command *new_command(const char *cmdstr);
-void delete_command(Command *command);
 void append(Command *command);
 void delete(Command *command);
+void delete_command(Command *command);
 void edit(Command *command);
 void find(Command *command);
+void init_regex();
 void print(Command *command);
-void read_in(Command *command);
-void write_out(Command *command);
 void quit(Command *command);
+void read_in(Command *command);
 void unknown(Command *command);
+void write_out(Command *command);
 
 #endif

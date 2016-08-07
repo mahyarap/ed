@@ -34,8 +34,8 @@ int ed(int argc, char **argv)
 	function func;
 
 	init_regex();
-
 	cmdstr = charalloc(PATH_MAX + BUFFSIZE);
+
 	if (argc > 0) {
 		curbuf = new_buffer(argv[0]);
 		sprintf(cmdstr, "e %s\n", curbuf->path);
