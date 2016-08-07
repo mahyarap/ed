@@ -103,8 +103,7 @@ static int parse_phase_1(CommandPhase1 *cmdphase1, const char *cmdstr)
 		if (beg - end < len) {
 			strncpy(cmdphase1->range.beg, cmd_copy + beg, end - beg);
 			cmdphase1->range.beg[end] = '\0';
-		}
-		else {
+		} else {
 			return 1;
 		}
 	}
@@ -115,8 +114,7 @@ static int parse_phase_1(CommandPhase1 *cmdphase1, const char *cmdstr)
 		if (beg - end < len) {
 			strncpy(cmdphase1->range.end, cmd_copy + beg, end - beg);
 			cmdphase1->range.end[end] = '\0';
-		}
-		else {
+		} else {
 			return 1;
 		}
 	}
@@ -131,8 +129,7 @@ static int parse_phase_1(CommandPhase1 *cmdphase1, const char *cmdstr)
 
 		if (beg - end < PATH_MAX) {
 			strcpy(cmdphase1->arg, cmd_copy + beg);
-		}
-		else {
+		} else {
 			return 1;
 		}
 	}
@@ -146,45 +143,37 @@ static int parse_phase_2(Command *command, const CommandPhase1 *cmdphase1)
 	if (strlen(cmdphase1->range.beg) > 0) {
 		if (strcmp(cmdphase1->range.beg, "$") == 0) {
 			command->range.beg = RANGE_DOLLAR;
-		}
-		else if (strcmp(cmdphase1->range.beg, ".") == 0) {
+		} else if (strcmp(cmdphase1->range.beg, ".") == 0) {
 			command->range.beg = RANGE_DOT;
-		}
-		else {
+		} else {
 			long converted;
 
 			converted = strtol(cmdphase1->range.beg, NULL, 10);
 			if (converted > 0 && converted != LONG_MAX) {
 				command->range.beg = converted;
-			}
-			else {
+			} else {
 				return 1;
 			}
 		}
-	}
-	else {
+	} else {
 		command->range.beg = RANGE_NOTSET;
 	}
 	if (strlen(cmdphase1->range.end) > 0) {
 		if (strcmp(cmdphase1->range.end, "$") == 0) {
 			command->range.end = RANGE_DOLLAR;
-		}
-		else if (strcmp(cmdphase1->range.end, ".") == 0) {
+		} else if (strcmp(cmdphase1->range.end, ".") == 0) {
 			command->range.end = RANGE_DOT;
-		}
-		else {
+		} else {
 			long converted;
 
 			converted = strtol(cmdphase1->range.end, NULL, 10);
 			if (converted > 0 && converted != LONG_MAX) {
 				command->range.end = converted;
-			}
-			else {
+			} else {
 				return 1;
 			}
 		}
-	}
-	else {
+	} else {
 		command->range.end = RANGE_NOTSET;
 	}
 

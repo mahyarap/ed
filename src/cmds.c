@@ -141,8 +141,7 @@ void find(Command *command)
 {
 	if (strlen(curbuf->path) != 0) {
 		puts(curbuf->path);
-	}
-	else {
+	} else {
 		unknown(command);
 	}
 }
@@ -170,7 +169,8 @@ void print(Command *command)
 
 void read_in(Command *command)
 {
-	ssize_t retval;
+	char *path;
+	ssize_t nbytes;
 
 	if (strlen(curbuf->path) == 0 && strlen(command->arg) == 0) {
 		unknown(command);
@@ -180,15 +180,16 @@ void read_in(Command *command)
 	if (strlen(curbuf->path) == 0) {
 		strcpy(curbuf->path, command->arg);
 	}
-	retval = read_file(curbuf,
-			(strlen(command->arg) != 0) ? command->arg : curbuf->path);
-	if (retval < 0) {
+
+	path = (strlen(command->arg) != 0) ? command->arg : curbuf->path;
+	nbytes = read_file(curbuf, path);
+	if (nbytes < 0) {
 		unknown(command);
 		return;
 	}
 
 	renumber_buffer(curbuf);
-	printf("%ld\n", retval);
+	printf("%ld\n", nbytes);
 }
 
 void write_out(Command *command)
@@ -201,15 +202,17 @@ void write_out(Command *command)
 	if (strlen(curbuf->path) == 0) {
 		strcpy(curbuf->path, command->arg);
 	}
-	ssize_t retval;
-	retval = write_buffer(
-			(strlen(command->arg) != 0) ? command->arg : curbuf->path);
-	if (retval < 0) {
+
+	char * path;
+	ssize_t nbytes;
+	path = (strlen(command->arg) != 0) ? command->arg : curbuf->path;
+	nbytes = write_buffer(path);
+	if (nbytes < 0) {
 		unknown(command);
 		return;
 	}
 	curbuf->modified = false;
-	printf("%ld\n", retval);
+	printf("%ld\n", nbytes);
 }
 
 void quit(Command *command)
