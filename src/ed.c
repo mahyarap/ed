@@ -34,8 +34,8 @@ int ed(int argc, char **argv)
 	function func;
 
 	init_regex();
-
 	cmdstr = charalloc(PATH_MAX + BUFFSIZE);
+
 	if (argc > 0) {
 		curbuf = new_buffer(argv[0]);
 		sprintf(cmdstr, "e %s\n", curbuf->path);
@@ -43,8 +43,7 @@ int ed(int argc, char **argv)
 		edit(command);
 		clrstr(cmdstr);
 		delete_command(command);
-	}
-	else {
+	} else {
 		curbuf = new_buffer(NULL);
 	}
 
@@ -55,8 +54,7 @@ int ed(int argc, char **argv)
 	 * Execute the command */
 	while (fgets(cmdstr, BUFFSIZE, stdin) != NULL) {
 		command = new_command(cmdstr);
-		retval = parse_command(command, cmdstr);
-		if (retval != 0) {
+		if (parse_command(command, cmdstr) != 0) {
 			unknown(command);
 			clrstr(cmdstr);
 			delete_command(command);
